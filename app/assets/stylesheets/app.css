@@ -1,0 +1,34 @@
+body {
+  direction: rtl;
+}
+
+.ltr {
+  direction: ltr;
+}
+
+.content {
+  white-space: nowrap;
+  display: flex;
+}
+
+.section {
+  text-align: center;
+}
+
+.section.power {
+  flex: 1;
+}
+
+.section.power h1 {
+  font-size: 25vh;
+}
+
+.sidebar {
+  display: inline-block;
+}
+
+.mainContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}

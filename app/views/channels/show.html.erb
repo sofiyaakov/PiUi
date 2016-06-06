@@ -1,0 +1,18 @@
+<div class='content'>
+  <div class='sidebar'><%= render partial: 'channel_status', collection: @channels[0..7] %></div>
+  <div class='mainContainer'>
+    <div class='section'>
+      <h1><span class="label label-<%=@channel[:status] ? 'success' : 'danger'%>"><%= "ערוץ מס׳ #{@channel[:number]}: #{@channel[:title]}"%></span></h1>
+    </div>
+    <div class='section power ltr'>
+      <h1><%= "#{@channel[:power]} KWh"%></h1>
+    </div>
+    <div class='section'>
+      <%= render partial: 'period_button', locals: { label: 'זמן אמת', period: 'realtime'} %>
+      <%= render partial: 'period_button', locals: { label: 'היום', period: 'day'} %>
+      <%= render partial: 'period_button', locals: { label: 'השבוע', period: 'week'} %>
+      <%= render partial: 'period_button', locals: { label: 'החודש', period: 'month'} %>
+    </div>
+  </div>
+  <div class='sidebar'><%= render partial: 'channel_status', collection: @channels[8..15] %></div>
+</div>
