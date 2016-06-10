@@ -9,7 +9,11 @@
 </head>
 <body>
   <div class='container'>
-    <%= yield %>
+    <div class='sidebar'><%= render partial: 'channel_status', collection: @channels[0..7] %></div>
+    <div class='mainContainer'>
+      <%= yield %>
+    </div>
+    <div class='sidebar'><%= render partial: 'channel_status', collection: @channels[8..15] %></div>
   </div>
 </body>
 </html>

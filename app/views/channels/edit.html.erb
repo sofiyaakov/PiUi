@@ -1,0 +1,35 @@
+<div class='section'>
+  <h1><span class="label label-primary"><%= "הגדרות ערוץ מס׳ #{@channel[:number]}"%></span></h1>
+</div>
+<div class='section'>
+  <h3>ערוץ זה <span class="label label-<%=@channel[:status] ? 'success' : 'danger'%>"><%=@channel[:status] ? 'פעיל' : 'אינו פעיל'%></span> כרגע</h3>
+</div>
+<div class='section stretch form-container'>
+  <form class='channel-form' action='' method='POST'>
+    <div class='form-input'>
+      <label for='ch_title'>שם הערוץ</label>
+      <input type='text' id='ch_title' name='title' value='<%= @channel[:title] %>' />
+    </div>
+    <div class='form-input'>
+      <label for='ch_category'>קטגוריה/רכיב</label>
+      <input type='text' id='ch_category' name='category' value='<%= @channel[:category] %>' />
+    </div>
+    <div class='form-input'>
+      <label for='ch_transmitter'>משדר מקושר</label>
+      <input type='text' id='ch_transmitter' name='transmitter' value='<%= @channel[:transmitter] %>' />
+    </div>
+    <div class='form-input'>
+      <label for='ch_parent'>ערוץ אב</label>
+      <input type='number' id='ch_parent' name='parent' value='<%= @channel[:parent] %>' />
+    </div>
+    <div class='form-input'>
+      <label for='ch_max_current'>זרם מקסימלי</label>
+      <div>A<input type='number' id='ch_max_current' name='max_current' value='<%= @channel[:max_current] %>' /></div>
+    </div>
+    <div class='form-input'>
+      <label for='ch_supply_voltage'>הזנת מתח</label>
+      <div>V<input type='number' id='ch_supply_voltage' name='supply_voltage' value='<%= @channel[:supply_voltage] %>' /></div>
+    </div>
+    <input type='submit' class='btn btn-lg btn-primary' value='שמור'>
+  </form>
+</div>

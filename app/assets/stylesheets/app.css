@@ -6,7 +6,7 @@ body {
   direction: ltr;
 }
 
-.content {
+.container {
   white-space: nowrap;
   display: flex;
 }
@@ -15,12 +15,30 @@ body {
   text-align: center;
 }
 
-.section.power {
+.section.stretch {
   flex: 1;
 }
 
-.section.power h1 {
+.section.stretch h1 {
   font-size: 25vh;
+}
+
+.form-container {
+  display: flex;
+}
+
+.channel-form {
+  align-items: center;
+  flex-direction: column;
+  display: flex;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.form-input {
+  display: flex;
+  justify-content: space-between;
+  width: 60%;
 }
 
 .sidebar {

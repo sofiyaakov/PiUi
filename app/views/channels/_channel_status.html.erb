@@ -1,1 +1,2 @@
-<h3><a href="?channel=<%= channel_status[:number] %>&period=<%= @period %>"><span class="label label-<%= channel_status[:status] ? 'success' : 'danger' %>"><%= channel_status[:number] %></span></a></h2>
+<% link = params[:action] == 'edit' ? edit_channel_path(channel_status[:number]) : channel_path(channel_status[:number], period: @period) %>
+<h3><a href="<%= link %>"><span class="label label-<%= channel_status[:status] ? 'success' : 'danger' %>"><%= channel_status[:number] %></span></a></h2>

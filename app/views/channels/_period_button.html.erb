@@ -1,1 +1,2 @@
-<a href="?period=<%= period %>&channel=<%= @channel[:number] %>" class="btn btn-lg btn-<%= @period == period ? 'primary' : 'default' %>"><%= label %></a>
+<a href="<%= channel_path(@channel[:number], period: period) %>" class="btn btn-lg btn-<%= @period == period ? 'primary' : 'default' %>"><%= label %></a>
+
