@@ -3,17 +3,20 @@
 <head>
   <title>PiUi</title>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
 </head>
 <body>
-  <div class='container'>
-    <div class='sidebar'><%= render partial: 'channel_status', collection: @channels[0..7] %></div>
-    <div class='mainContainer'>
+  <div class='container well'>
+    <div class='navbar'>
+      <%= render partial: 'layouts/navbar' %>
+    </div>
+    <div class='tab-container'>
       <%= yield %>
     </div>
-    <div class='sidebar'><%= render partial: 'channel_status', collection: @channels[8..15] %></div>
+    <div>
+
+    </div>
   </div>
 </body>
 </html>

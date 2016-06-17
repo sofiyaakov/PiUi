@@ -1,0 +1,5 @@
+<div class='sidebar'><%= render partial: 'channel_status', collection: @channels[0..7] %></div>
+<div class='mainContainer'>
+  <%= render partial: params[:action] %>
+</div>
+<div class='sidebar'><%= render partial: 'channel_status', collection: @channels[8..15] %></div>

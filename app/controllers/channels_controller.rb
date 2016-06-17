@@ -4,9 +4,11 @@ class ChannelsController < ActionController::Base
 
   def show
     @period = params['period'] || 'realtime'
+    render :channel
   end
 
   def edit
+    render :channel
   end
 
   private
