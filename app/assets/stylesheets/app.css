@@ -44,12 +44,26 @@ body {
   display: flex;
 }
 
-.channel-form {
+.channel-form, .settings-form {
+  padding-top: 20px;
   align-items: center;
   flex-direction: column;
   display: flex;
   flex: 1;
   justify-content: space-between;
+}
+
+.settings-form .form-input {
+  padding-top: 10px;
+}
+
+.form-input .input-group {
+  width: inherit;
+}
+
+.form-input .form-control {
+  text-align: right;
+  width: inherit;
 }
 
 .form-input {
@@ -63,8 +77,17 @@ body {
   flex: 1;
 }
 
+.sidebar > h3:last-child {
+  margin-bottom: 0;
+}
+
 .mainContainer {
   flex: 8;
   display: flex;
   flex-direction: column;
+}
+
+.kineret-logo {
+  margin-top: 20px;
+  height: 100px;
 }

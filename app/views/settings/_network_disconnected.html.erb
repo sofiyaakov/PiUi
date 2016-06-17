@@ -1,0 +1,23 @@
+<div class='section'>
+  <h3>חיבור לרשת אלחוטית <span class="label label-danger">מנותק</span></h3>
+</div>
+<div class='section stretch form-container'>
+  <form class='settings-form' action='' method='POST'>
+    <div class='form-input'>
+      <label for='net_ssid'>שם הרשת</label>
+      <select id='net_ssid' name='ssid' class="form-control">
+        <% @networks.each do |network| %>
+        <option value='<%= network[:ssid] %>'><%= network[:ssid] %></option>
+        <% end %>
+      </select>
+    </div>
+    <div class='form-input'>
+      <label for='net_password'>סיסמא</label>
+      <input class='form-control' type='text' id='net_password' name='password' value='<%=  %>' />
+    </div>
+    <div class='form-input'>
+      <label></label>
+      <input type='submit' class='btn-save btn btn-success' value='התחבר'>
+    </div>
+  </form>
+</div>

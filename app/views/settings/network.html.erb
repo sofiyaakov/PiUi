@@ -1,0 +1,12 @@
+<div class='mainContainer'>
+  <div class='section'>
+    <h1><span class="label label-primary">הגדרות רשת אלחוטית</span></h1>
+  </div>
+
+  <% if @network %>
+    <%= render partial: 'network_connected' %>
+  <% else %>
+    <%= render partial: 'network_disconnected' %>
+  <% end %>
+
+</div>

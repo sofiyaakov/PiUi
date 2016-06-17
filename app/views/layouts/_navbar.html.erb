@@ -1,8 +1,8 @@
 <ul class="nav nav-tabs">
-  <li role="presentation" class="<%= 'active' if params[:action] == 'show'%>"><a href="/channels/1">ראשי</a></li>
-  <li role="presentation" class="<%= 'active' if params[:action] == 'edit'%>"><a href="/channels/1/edit">הגדרות ערוץ</a></li>
-  <li role="presentation"><a href="#">חיבור רשת</a></li>
-  <li role="presentation"><a href="#">קישוריות אינטרנט</a></li>
-  <li role="presentation"><a href="#">סנכרון לענן</a></li>
-  <li role="presentation"><a href="#">אודות</a></li>
+  <li role="presentation" class="<%= 'active' if params[:action] == 'show' %>"><a href="/channels/1">ראשי</a></li>
+  <li role="presentation" class="<%= 'active' if params[:action] == 'edit' %>"><a href="/channels/1/edit">הגדרות ערוץ</a></li>
+  <li role="presentation" class="<%= 'active' if params[:action] == 'network' %>"><a href="/settings/network">חיבור רשת</a></li>
+  <li role="presentation" class="<%= 'active' if params[:action] == 'internet' %>"><a href="/settings/internet">קישוריות אינטרנט</a></li>
+  <li role="presentation" class="<%= 'active' if params[:action] == 'sync' %>"><a href="/settings/sync">סנכרון לענן</a></li>
+  <li role="presentation" class="<%= 'active' if params[:action] == 'info' %>"><a href="/settings/info">אודות</a></li>
 </ul>

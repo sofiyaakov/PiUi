@@ -1,2 +1,2 @@
 <% link = params[:action] == 'edit' ? edit_channel_path(channel_status[:number]) : channel_path(channel_status[:number], period: @period) %>
-<h3><a href="<%= link %>"><span class='channel-btn btn btn-<%= channel_status[:status] ? 'success' : 'danger'%> <%= channel_status[:number] == @channel[:number] && 'active' %>'><%= channel_status[:number] %></span></a></h2>
+<h3><a href="<%= link %>"><span class='channel-btn btn btn-<%= channel_status[:status] ? 'success' : 'danger'%> <%= channel_status[:number] == @channel[:number] && 'active' %>'><%= channel_status[:number] %></span></a></h3>

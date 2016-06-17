@@ -8,28 +8,37 @@
   <form class='channel-form' action='' method='POST'>
     <div class='form-input'>
       <label for='ch_title'>שם הערוץ</label>
-      <input type='text' id='ch_title' name='title' value='<%= @channel[:title] %>' />
+      <input class='form-control' type='text' id='ch_title' name='title' value='<%= @channel[:title] %>' />
     </div>
     <div class='form-input'>
       <label for='ch_category'>קטגוריה/רכיב</label>
-      <input type='text' id='ch_category' name='category' value='<%= @channel[:category] %>' />
+      <input class='form-control' type='text' id='ch_category' name='category' value='<%= @channel[:category] %>' />
     </div>
     <div class='form-input'>
       <label for='ch_transmitter'>משדר מקושר</label>
-      <input type='text' id='ch_transmitter' name='transmitter' value='<%= @channel[:transmitter] %>' />
+      <input class='form-control' type='text' id='ch_transmitter' name='transmitter' value='<%= @channel[:transmitter] %>' />
     </div>
     <div class='form-input'>
       <label for='ch_parent'>ערוץ אב</label>
-      <input type='number' id='ch_parent' name='parent' value='<%= @channel[:parent] %>' />
+      <input class='form-control' type='number' id='ch_parent' name='parent' value='<%= @channel[:parent] %>' />
     </div>
     <div class='form-input'>
       <label for='ch_max_current'>זרם מקסימלי</label>
-      <div>A<input type='number' id='ch_max_current' name='max_current' value='<%= @channel[:max_current] %>' /></div>
+      <div class="input-group" dir='ltr'>
+        <input class='form-control' type='number' id='ch_max_current' name='max_current' value='<%= @channel[:max_current] %>' />
+        <span class="input-group-addon">A</span>
+      </div>
     </div>
     <div class='form-input'>
       <label for='ch_supply_voltage'>הזנת מתח</label>
-      <div>V<input type='number' id='ch_supply_voltage' name='supply_voltage' value='<%= @channel[:supply_voltage] %>' /></div>
+      <div class="input-group" dir='ltr'>
+        <input class='form-control' type='number' id='ch_supply_voltage' name='supply_voltage' value='<%= @channel[:supply_voltage] %>' />
+        <span class="input-group-addon">V</span>
+      </div>
     </div>
-    <input type='submit' class='btn btn-lg btn-primary' value='שמור'>
+    <div class='form-input'>
+      <label></label>
+      <input type='submit' class='btn-save btn btn-lg btn-primary' value='שמור'>
+    </div>
   </form>
 </div>

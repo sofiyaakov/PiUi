@@ -6,7 +6,10 @@ Rails.application.routes.draw do
   root 'channels#show'
 
   # Example of regular route:
-  # get 'channels/:id' => 'channels#show'
+  get 'settings/network' => 'settings#network'
+  get 'settings/internet' => 'settings#internet'
+  get 'settings/sync' => 'settings#sync'
+  get 'settings/info' => 'settings#info'
   # get 'channels/:id/edit' => 'channels#edit'
   resources :channels
   # Example of named route that can be invoked with purchase_url(id: product.id)
