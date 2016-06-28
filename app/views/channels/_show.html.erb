@@ -1,8 +1,11 @@
 <div class='section'>
-  <h1><span class="label label-<%=@channel[:status] ? 'success' : 'danger'%>"><%= "ערוץ מס׳ #{@channel[:number]}: #{@channel[:title]}"%></span></h1>
+  <h1><span class="label label-primary %>"><%= "ערוץ מס׳ #{@channel[:Channel]}: #{@channel[:Name]}"%></span></h1>
+</div>
+<div class='section'>
+  <%= render partial: 'channel_status_desc' %>
 </div>
 <div class='section stretch ltr'>
-  <h1><%= "#{@channel[:power]} KWh"%></h1>
+  <h1><%= power_string %></h1>
 </div>
 <div class='section'>
   <%= render partial: 'period_button', locals: { label: 'זמן אמת', period: 'realtime'} %>

@@ -1,38 +1,38 @@
 <div class='section'>
-  <h1><span class="label label-primary"><%= "הגדרות ערוץ מס׳ #{@channel[:number]}"%></span></h1>
+  <h1><span class="label label-primary"><%= "הגדרות ערוץ מס׳ #{@channel[:Channel]}"%></span></h1>
 </div>
 <div class='section'>
-  <h3>ערוץ זה <span class="label label-<%=@channel[:status] ? 'success' : 'danger'%>"><%=@channel[:status] ? 'פעיל' : 'אינו פעיל'%></span> כרגע</h3>
+  <%= render partial: 'channel_status_desc' %>
 </div>
 <div class='section stretch form-container'>
   <form class='channel-form' action='' method='POST'>
     <div class='form-input'>
-      <label for='ch_title'>שם הערוץ</label>
-      <input class='form-control' type='text' id='ch_title' name='title' value='<%= @channel[:title] %>' />
+      <label for='ch_Name'>שם הערוץ</label>
+      <input class='form-control' type='text' id='ch_Name' name='Name' value='<%= @channel[:Name] %>' />
     </div>
     <div class='form-input'>
-      <label for='ch_category'>קטגוריה/רכיב</label>
-      <input class='form-control' type='text' id='ch_category' name='category' value='<%= @channel[:category] %>' />
+      <label for='ch_Category'>קטגוריה/רכיב</label>
+      <input class='form-control' type='text' id='ch_Category' name='Category' value='<%= @channel[:Category] %>' />
     </div>
     <div class='form-input'>
-      <label for='ch_transmitter'>משדר מקושר</label>
-      <input class='form-control' type='text' id='ch_transmitter' name='transmitter' value='<%= @channel[:transmitter] %>' />
+      <label for='ch_Transmitter'>משדר מקושר</label>
+      <input class='form-control' type='text' id='ch_Transmitter' name='Transmitter' value='<%= @channel[:Transmitter] %>' />
     </div>
     <div class='form-input'>
-      <label for='ch_parent'>ערוץ אב</label>
-      <input class='form-control' type='number' id='ch_parent' name='parent' value='<%= @channel[:parent] %>' />
+      <label for='ch_ChannelMaster'>ערוץ אב</label>
+      <input class='form-control' type='number' id='ch_ChannelMaster' name='ChannelMaster' value='<%= @channel[:ChannelMaster] %>' />
     </div>
     <div class='form-input'>
-      <label for='ch_max_current'>זרם מקסימלי</label>
+      <label for='ch_MaxCurrent'>זרם מקסימלי</label>
       <div class="input-group" dir='ltr'>
-        <input class='form-control' type='number' id='ch_max_current' name='max_current' value='<%= @channel[:max_current] %>' />
+        <input class='form-control' type='number' id='ch_MaxCurrent' name='MaxCurrent' value='<%= @channel[:MaxCurrent] %>' />
         <span class="input-group-addon">A</span>
       </div>
     </div>
     <div class='form-input'>
-      <label for='ch_supply_voltage'>הזנת מתח</label>
+      <label for='ch_ManualVoltage'>הזנת מתח</label>
       <div class="input-group" dir='ltr'>
-        <input class='form-control' type='number' id='ch_supply_voltage' name='supply_voltage' value='<%= @channel[:supply_voltage] %>' />
+        <input class='form-control' type='number' id='ch_ManualVoltage' name='ManualVoltage' value='<%= @channel[:ManualVoltage] %>' />
         <span class="input-group-addon">V</span>
       </div>
     </div>

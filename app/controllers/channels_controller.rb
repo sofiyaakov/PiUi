@@ -1,9 +1,12 @@
 class ChannelsController < ActionController::Base
 	layout 'application'
   before_action :get_data, :get_channel
+  helper :channels
 
   def show
     @period = params['period'] || 'realtime'
+    @channels_data = $dbclient.query(power_query).first(16)
+    @channel[:Power] = @channels_data.find {|ch| ch['Channel'] == @channel[:Channel]}.try(:[],'Power')
     render :channel
   end
 
@@ -13,28 +16,33 @@ class ChannelsController < ActionController::Base
 
   private
   def get_data
-    @channels = [
-      {number: 1, title: "מטבח", power: 1.23, status: true, category: 'שקעים', transmitter: 210, parent: 4, max_current: 10, supply_voltage: 220},
-      {number: 2, title: "מחסן", power: 0, status: false, category: 'שקעים', transmitter: 211, parent: 4, max_current: 10, supply_voltage: 220 },
-      {number: 3, title: "חדר שינה", power: 1.5, status: true, category: 'שקעים', transmitter: 212, parent: 4, max_current: 10, supply_voltage: 220},
-      {number: 4, title: "סלון", power: 0.4, status: true, category: 'שקעים', transmitter: 213, max_current: 20, supply_voltage: 220},
-      {number: 5, title: "מקרר", power: 0, status: false, category: 'שקעים', transmitter: 214, max_current: 10, supply_voltage: 220},
-      {number: 6, title: "מזגן הורים", power: 2, status: true, category: 'שקעים', transmitter: 215, max_current: 10, supply_voltage: 220},
-      {number: 7, title: "תנור", power: 1.1, status: true, category: 'שקעים', transmitter: 216, max_current: 10, supply_voltage: 220},
-      {number: 8, title: "דוד חשמל", power: 0.9, status: true, category: 'שקעים', transmitter: 217, max_current: 10, supply_voltage: 220},
-      {number: 9, title: "מטבח", power: 1.23, status: true, category: 'מונורות', transmitter: 218, max_current: 10, supply_voltage: 220},
-      {number: 10, title: "מחסן", power: 0, status: false, category: 'מונורות', transmitter: 219, max_current: 10, supply_voltage: 220},
-      {number: 11, title: "חדר שינה", power: 1.5, status: true, category: 'מונורות', transmitter: 220, parent: 6, max_current: 10, supply_voltage: 220},
-      {number: 12, title: "סלון", power: 0.4, status: true, category: 'מונורות', transmitter: 221, parent: 6, max_current: 10, supply_voltage: 220},
-      {number: 13, title: "מקרר", power: 0, status: false, category: 'מונורות', transmitter: 222, parent: 6, max_current: 10, supply_voltage: 220},
-      {number: 14, title: "מזגן הורים", power: 2, status: true, category: 'שקעים', transmitter: 223, max_current: 10, supply_voltage: 220},
-      {number: 15, title: "חדר ילדים", power: 1.1, status: true, category: 'ראשי', transmitter: 224, max_current: 10, supply_voltage: 220},
-      {number: 16, title: "חדר שינה", power: 0.9, status: true, category: 'ראשי', transmitter: 225, max_current: 10, supply_voltage: 220}
-    ]
+    @settings = $dbclient.query('select * from Channels_S order by Channel').first(16) # I'm assuming there are at least 16 channels
+    @channels_not_active = $dbclient.query('Select Channel from ChannelsNotActive where unix_timestamp()-unix_timestamp(Time)<10 order by Channel').first(16)
+    @channels_active = $dbclient.query('select Channel from RT where STS_Sync = 0 and unix_timestamp()-unix_timestamp(Time)<12 group by Channel order by Channel').first(16)
+
+    @channels = @settings.map(&:symbolize_keys)
+    @channels_not_active.each {|na| @channels[na["Channel"] - 1][:Status] = 2 }
+    @channels_active.each {|ac| @channels[ac["Channel"] - 1][:Status] = 4 }
+    @channels = @channels.each do |ch|
+      ch[:Status] ||= ch[:Transmitter] && ch[:Active] == 1 ? 3 : 1
+    end
   end
 
   def get_channel
     channel_id = (params[:id] || 1).to_i - 1
     @channel = @channels[channel_id]
+  end
+
+  def power_query
+    case @period
+    when 'realtime'
+      'select Channel,Power from RT where STS_Sync = 0 and unix_timestamp()-unix_timestamp(Time)<10 group by Channel order by Channel'
+    when 'day'
+      'select Channel,round(sum(power)/1000/60,3) `Power` from STS where ID>=(select min(id) from STS where time >= current_date) group by Channel'
+    when 'week'
+      'select Channel,round(sum(power)/1000/60,3) `Power` from STS where ID>=(select min(id) from STS where yearweek(time) = yearweek(curdate(),0)) group by Channel'
+    when 'month'
+      'select Channel,round(sum(power)/1000/60,3) `Power` from STS where ID>=(select min(id) from STS where month(time) = month(now())) group by Channel'
+    end
   end
 end
