@@ -14,3 +14,16 @@
 //= require jquery_ujs
 //= require turbolinks
 //= require_tree .
+
+$( document ).ready(function() {
+  $('input.bs-checkbox').bootstrapSwitch();
+});
+
+$(document).on('turbolinks:load', function() {
+  console.log("HELLO");
+  $('input.bs-checkbox').bootstrapSwitch();
+});
+
+document.addEventListener("turbolinks:load", function() {
+  console.log("HELLO2");
+})

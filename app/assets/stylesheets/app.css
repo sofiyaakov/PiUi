@@ -73,7 +73,9 @@ body {
 }
 
 .sidebar {
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   flex: 1;
 }
 
@@ -90,4 +92,8 @@ body {
 .kineret-logo {
   margin-top: 20px;
   height: 100px;
+}
+
+h1 {
+  font-size: 3em;
 }

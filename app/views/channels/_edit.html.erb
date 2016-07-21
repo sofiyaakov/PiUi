@@ -5,18 +5,38 @@
   <%= render partial: 'channel_status_desc' %>
 </div>
 <div class='section stretch form-container'>
-  <form class='channel-form' action='' method='POST'>
+  <form class='channel-form' action='<%= channel_path(@channel[:Channel]) %>' method='POST'>
+    <input name="_method" type="hidden" value="patch" />
     <div class='form-input'>
       <label for='ch_Name'>שם הערוץ</label>
       <input class='form-control' type='text' id='ch_Name' name='Name' value='<%= @channel[:Name] %>' />
     </div>
     <div class='form-input'>
-      <label for='ch_Category'>קטגוריה/רכיב</label>
-      <input class='form-control' type='text' id='ch_Category' name='Category' value='<%= @channel[:Category] %>' />
+      <label for='ch_Component'>רכיב</label>
+      <input list="components" class='form-control' type='text' id='ch_Component' name='Component' value='<%= @channel[:Component] %>'>
+      <datalist id="components">
+        <% @components.map do |component|  %>
+          <option value='<%= component %>'>
+        <% end %>
+      </datalist>
+    </div>
+    <div class='form-input'>
+      <label for='ch_Category'>קטגוריה</label>
+      <input list="categories" class='form-control' type='text' id='ch_Category' name='Category' value='<%= @channel[:Category] %>' />
+      <datalist id="categories">
+        <% @categories.map do |category|  %>
+          <option value='<%= category %>'>
+        <% end %>
+      </datalist>
     </div>
     <div class='form-input'>
       <label for='ch_Transmitter'>משדר מקושר</label>
-      <input class='form-control' type='text' id='ch_Transmitter' name='Transmitter' value='<%= @channel[:Transmitter] %>' />
+      <select class='form-control' type='text' id='ch_Transmitter' name='Transmitter' value='<%= @channel[:Transmitter] %>'>
+        <option selected value='<%= @channel[:Transmitter] %>'> (<%= @channel[:Transmitter] %> <%= "לא " unless @channel[:Transmitter].present? %>מוגדר כרגע)</option>
+        <% @transmitters.map do |transmitter|  %>
+          <option value='<%= transmitter["Transmitter"] %>'><%= transmitter["Transmitter"] %> (<%=transmitter["last seen"] %>)</option>
+        <% end %>
+      </select>
     </div>
     <div class='form-input'>
       <label for='ch_ChannelMaster'>ערוץ אב</label>
@@ -37,7 +57,21 @@
       </div>
     </div>
     <div class='form-input'>
-      <label></label>
+      <label for='ch_Active'>פעיל</label>
+      <div class="input-group checkbox-wrapper">
+        <input value='0' type="hidden" name='Active'>
+        <input id='ch_Active' value='1' class="bs-checkbox" type="checkbox" name='Active' <%= "checked" if !@channel[:Active].zero? %>>
+      </div>
+    </div>
+    <div class='form-input'>
+      <label for='ch_CloudRT'>זמן אמת לענן</label>
+      <div class="input-group checkbox-wrapper">
+        <input value='0' type="hidden" name='CloudRT'>
+        <input value='1' id='ch_CloudRT' class="bs-checkbox" type="checkbox" name='CloudRT' <%= "checked" if !@channel[:CloudRT].zero? %>>
+      </div>
+    </div>
+    <div class='form-input'>
+      <h4><b>עדכון אחרון: <%= @channel[:ChangeDate].strftime("%d/%m/%Y - %H:%M") %></b></h4>
       <input type='submit' class='btn-save btn btn-lg btn-primary' value='שמור'>
     </div>
   </form>
