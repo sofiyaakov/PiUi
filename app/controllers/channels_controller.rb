@@ -36,13 +36,18 @@ class ChannelsController < ActionController::Base
   def power_query
     case @period
     when 'realtime'
-      'select Channel,Power from RT where STS_Sync = 0 and unix_timestamp()-unix_timestamp(Time)<10 group by Channel order by Channel'
+      'select Channel,Power from RT where STS_Sync = 0 and unix_timestamp()-unix_timestamp(Time)<12  group by Channel order by ID desc'
+      #'select Channel,Power from RT where STS_Sync = 0 and unix_timestamp()-unix_timestamp(Time)<10 group by Channel order by Channel'
+      
     when 'day'
-      'select Channel,round(sum(power)/1000/60,3) `Power` from STS where ID>=(select min(id) from STS where time >= current_date) group by Channel'
+      #'select Channel,round(sum(power)/1000/60,3) `Power` from STS where ID>=(select min(id) from STS where time >= current_date) group by Channel'
+      'Select tab1.Channel, round(tab1.Power+tab2.Power,3) as Power from (Select Channel,sum(Power)/600/1000 as Power from RT where STS_Sync = 0 group by Channel) tab1, (Select Channel,sum(Power)/60/1000 as Power from STS where ID >=(select min(id) from STS where time >= current_date) group by Channel) tab2 where tab1.Channel=tab2.Channel'
     when 'week'
-      'select Channel,round(sum(power)/1000/60,3) `Power` from STS where ID>=(select min(id) from STS where yearweek(time) = yearweek(curdate(),0)) group by Channel'
+      #'select Channel,round(sum(power)/1000/60,2) `Power` from STS where ID>=(select min(id) from STS where yearweek(time) = yearweek(curdate(),0)) group by Channel'
+      'Select tab1.Channel, round(tab0.Weekly+tab1.Power+tab2.Power,3) as Power from (Select Channel,Weekly from CumuConsumption) tab0, (Select Channel,sum(Power)/600/1000 as Power from RT where STS_Sync = 0 group by Channel) tab1, (Select Channel,sum(Power)/60/1000 as Power from STS where ID >=(select min(id) from STS where time >= current_date) group by Channel) tab2 where tab0.Channel=tab1.Channel and tab1.Channel=tab2.Channel'
     when 'month'
-      'select Channel,round(sum(power)/1000/60,3) `Power` from STS where ID>=(select min(id) from STS where month(time) = month(now())) group by Channel'
+      #'select Channel,round(sum(power)/1000/60,2) `Power` from STS where ID>=(select min(id) from STS where month(time) = month(now())) group by Channel'
+      'Select tab1.Channel, round(tab0.Monthly+tab1.Power+tab2.Power,3) as Power from (Select Channel,Monthly from CumuConsumption) tab0, (Select Channel,sum(Power)/600/1000 as Power from RT where STS_Sync = 0 group by Channel) tab1, (Select Channel,sum(Power)/60/1000 as Power from STS where ID >=(select min(id) from STS where time >= current_date) group by Channel) tab2 where tab0.Channel=tab1.Channel and tab1.Channel=tab2.Channel'
     end
   end
 end

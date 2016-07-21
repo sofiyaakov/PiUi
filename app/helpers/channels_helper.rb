@@ -4,9 +4,11 @@ module ChannelsHelper
     when 1
       'default'
     when 2
-      'danger'
-    when 3
+      #'danger'
       'warning'
+    when 3
+      #'warning'
+      'danger'
     when 4
       'success'
     else
@@ -30,8 +32,8 @@ module ChannelsHelper
   end
 
   def power_string
-    return "#{@channel[:Power]/1000} KW" if @period == 'realtime' && @channel[:Power].to_i > 1000
+    return "#{(@channel[:Power]/1000).round(3)} kW" if @period == 'realtime' && @channel[:Power].to_i > 1000
     return "#{@channel[:Power] || "--"} W" if @period == 'realtime'
-    "#{@channel[:Power] || "--"} KWh"
+    "#{@channel[:Power] || "--"} kWh"
   end
 end

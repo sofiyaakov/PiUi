@@ -19,9 +19,9 @@
     </div>
   </div>
 
-  <% if @period == 'realtime' || @period == 'day' %>
+  <% if @period == 'realtime' || @period == 'day' || @period == 'week' || @period == 'month'  %>
     <script>
-      setInterval(function(){ location.reload(); }, 10000);
+      setInterval(function(){ location.reload(); }, 6000);
     </script>
   <% end %>
 </body>
