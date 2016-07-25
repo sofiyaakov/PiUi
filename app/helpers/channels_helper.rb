@@ -36,4 +36,14 @@ module ChannelsHelper
     return "#{@channel[:Power] || "--"} W" if @period == 'realtime'
     "#{@channel[:Power] || "--"} kWh"
   end
+
+  def fixed_cost_string
+    return "עלות: #{(@channel[:fixed]*100).round(0)} אג' לשעה" if (@period == 'realtime' || @period == '60min') && @channel[:fixed].to_i < 1
+    return "עלות: #{@channel[:fixed] || "0"} ש\"ח לשעה" if @period == 'realtime'
+    "עלות: #{@channel[:fixed] || "0"} ש\"ח"
+  end
+
+def taoz_string
+    return "TAOZ data" if @period == 'realtime' ||  @period == '60min'
+  end
 end

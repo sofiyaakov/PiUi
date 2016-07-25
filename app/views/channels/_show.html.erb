@@ -6,9 +6,12 @@
 </div>
 <div class='section stretch ltr'>
   <h1><%= power_string %></h1>
+  <h2><%= fixed_cost_string %></h2>
+  <h2><%= taoz_string %></h2>
 </div>
 <div class='section'>
   <%= render partial: 'period_button', locals: { label: 'זמן אמת', period: 'realtime'} %>
+  <%= render partial: 'period_button', locals: { label: '60 דקות', period: '60min'} %>
   <%= render partial: 'period_button', locals: { label: 'היום', period: 'day'} %>
   <%= render partial: 'period_button', locals: { label: 'השבוע', period: 'week'} %>
   <%= render partial: 'period_button', locals: { label: 'החודש', period: 'month'} %>
