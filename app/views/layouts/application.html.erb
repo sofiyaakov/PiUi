@@ -10,13 +10,16 @@
   <div class='container well'>
     <div class='navbar'>
       <%= render partial: 'layouts/navbar' %>
+
     </div>
     <div class='tab-container'>
       <%= yield %>
+
     </div>
     <div>
 
     </div>
+    <h2>איכות הקליטה: <%= @reception_quality%>%</h2>
   </div>
 
   <% if @period == 'realtime' || @period == '60min' || @period == 'day' || @period == 'week' || @period == 'month'  %>
