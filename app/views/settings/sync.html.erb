@@ -1,8 +1,35 @@
 <div class='mainContainer'>
   <div class='section'>
     <h1><span class="label label-primary">הגדרות סנכרון לענן</span></h1>
+    <h4><b><%= lastSyncTimeString %></b></h4>
   </div>
 
-
+  <div class='section stretch form-container sync-form'>
+    <%= form_tag(settings_syncUpdate_path, class: 'channel-form', method: "patch") do %>
+      <div class='form-input'>
+        <label for='ch_Site'>שם האתר</label>
+        <input class='form-control' type='text' id='ch_Site' name='Site' value='<%= @sync[:Site]['Value'] %>' />
+      </div>
+      <div class='form-input'>
+        <label for='ch_OfflineMode'>סנכרון לענן</label>
+        <div class="input-group checkbox-wrapper">
+          <input value='1' type="hidden" name='OfflineMode'>
+          <input value='0' id='ch_OfflineMode' class="bs-checkbox" type="checkbox" name='OfflineMode' <%= "checked" if @sync[:OfflineMode].zero? %>>
+        </div>
+      </div>
+      <% if @sync[:Completion] %>
+        <div class="progress section">
+          <div class="progress-bar" role="progressbar" aria-valuenow="<%= @sync[:Completion] %>"
+          aria-valuemin="0" aria-valuemax="100" style="width:<%= @sync[:Completion] %>%">
+            <%= @sync[:Completion] %>%
+          </div>
+        </div>
+      <% end %>
+      <div class='form-input'>
+        <h4><b><%= "שם האתר עודכן לאחרונה ב: #{@sync[:Site]['Time'].strftime("%d/%m/%Y - %H:%M")}" %></b></h4>
+        <input type='submit' class='btn-save btn btn-lg btn-primary' value='שמור'>
+      </div>
+    <% end %>
+  </div>
 
 </div>

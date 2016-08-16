@@ -53,8 +53,18 @@ body {
   justify-content: space-between;
 }
 
-.settings-form .form-input {
-  padding-top: 10px;
+.progress {
+  width: 60%;
+  align-self: center;
+}
+
+.settings-form .form-input, .sync-form .form-input {
+  padding-bottom: 15px;
+}
+
+.separator {
+  border-top: 1px solid #aaa;
+  margin: 30px 0;
 }
 
 .form-input .input-group {
@@ -92,6 +102,15 @@ body {
 .kineret-logo {
   margin-top: 20px;
   height: 100px;
+}
+
+.footer-icon {
+  height: 30px;
+  margin-left: 10px;
+}
+
+.footer-container {
+  display: flex;
 }
 
 h1 {

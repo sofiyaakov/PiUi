@@ -14,12 +14,10 @@
     </div>
     <div class='tab-container'>
       <%= yield %>
-
     </div>
-    <div>
-
-    </div>
-    <h2>איכות הקליטה: <%= @reception_quality%>%</h2>
+    <!-- <h2>איכות הקליטה: <%= @reception_quality%>%</h2> -->
+    <div class="separator"></div>
+    <%= render partial: 'layouts/footer' %>
   </div>
 
   <% if @period == 'realtime' || @period == '60min' || @period == 'day' || @period == 'week' || @period == 'month'  %>

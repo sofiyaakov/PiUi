@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   get 'settings/network' => 'settings#network'
   get 'settings/internet' => 'settings#internet'
   get 'settings/sync' => 'settings#sync'
+  patch 'settings/syncUpdate' => 'settings#syncUpdate'
   get 'settings/info' => 'settings#info'
   get 'settings/tariffs' => 'settings#tariffs'
   # get 'channels/:id/edit' => 'channels#edit'
