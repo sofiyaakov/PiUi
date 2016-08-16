@@ -106,7 +106,7 @@ module ChannelsHelper
         return "זמן פעולה: #{Time.at((@channel[:daily_uptime]-120)*60).strftime("שעה ו- %M דקות")}"  if @channel[:daily_uptime] < 120
         return "זמן פעולה: #{Time.at((@channel[:daily_uptime]-120)*60).strftime("%k שעות ו- %M דקות")}"  
       when 'week'
-        return "זמן פעולה: #{Time.at(@channel[:weekly_uptime]*60).strftime("%M דקות")}" if @channel[:weekly_uptime] < 60
+        return "זמן פעולה: #{@channel[:weekly_uptime].round(0)} דקות"  if @channel[:weekly_uptime] < 60
         return "זמן פעולה: #{Time.at((@channel[:weekly_uptime]-120)*60).strftime("שעה ו- %M דקות")}"  if @channel[:weekly_uptime] < 120
         return "זמן פעולה: #{@channel[:weekly_uptime]/60} שעות ו-#{Time.at(@channel[:weekly_uptime]*60).strftime("%M דקות")}"
       when 'month'
@@ -131,7 +131,7 @@ module ChannelsHelper
     end
   end  
 
-  def percent_load
+  def load_percent
     #return 50
     return ((@channel[:Power]/220)/@channel[:MaxCurrent])*100
   end
