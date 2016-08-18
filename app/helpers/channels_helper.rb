@@ -117,15 +117,18 @@ module ChannelsHelper
   end
 
   def uptime_cost_string
-    return if @channel[:Component] == '' || @channel[:Active] == 0 || @channel[:daily_uptime] == 0
+    return if @channel[:Component] == '' || @channel[:Active] == 0 
     case @period
       when 'day'
+        return if @channel[:daily_uptime] == 0
         return "עלות: #{(@channel[:fixed]*100/(@channel[:daily_uptime])*60).round(0)} אג' לשעה" if (@channel[:fixed]/(@channel[:daily_uptime])*60) <1
         return "עלות: #{(@channel[:fixed]/(@channel[:daily_uptime])*60).round(2)} ש\"ח לשעה"
       when 'week'
+        return if @channel[:weekly_uptime] == 0
         return "עלות: #{(@channel[:fixed]*100/(@channel[:weekly_uptime])*60).round(0)} אג' לשעה" if (@channel[:fixed]/(@channel[:weekly_uptime])*60) <1
         return "עלות: #{(@channel[:fixed]/(@channel[:weekly_uptime])*60).round(2)} ש\"ח לשעה" 
       when 'month'
+        return if @channel[:monthly_uptime] == 0
         return "עלות: #{(@channel[:fixed]*100/(@channel[:monthly_uptime])*60).round(0)} אג' לשעה" if (@channel[:fixed]/(@channel[:monthly_uptime])*60) <1
         return "עלות: #{(@channel[:fixed]/(@channel[:monthly_uptime])*60).round(2)} ש\"ח לשעה" 
     end
