@@ -7,7 +7,8 @@ Rails.application.routes.draw do
 
   # Example of regular route:
   get 'settings/network' => 'settings#network'
-  get 'settings/internet' => 'settings#internet'
+  get 'settings/general' => 'settings#general'
+  patch 'settings/generalUpdate' => 'settings#generalUpdate'
   get 'settings/sync' => 'settings#sync'
   patch 'settings/syncUpdate' => 'settings#syncUpdate'
   get 'settings/info' => 'settings#info'

@@ -44,7 +44,7 @@ body {
   display: flex;
 }
 
-.channel-form, .settings-form {
+.piui-form {
   padding-top: 20px;
   align-items: center;
   flex-direction: column;
@@ -56,10 +56,48 @@ body {
 .progress {
   width: 60%;
   align-self: center;
+  background-color: #999999 !important;
+  text-align: center;
 }
 
-.settings-form .form-input, .sync-form .form-input {
+
+.progress .color-medium {
+  background-color: #337ab7 !important;
+}
+
+.progress .color-high {
+  background-color: red !important;
+}
+
+.progress .color-low {
+  background-color: green !important;
+}
+
+.social-norm-bar {
+  direction: ltr;
+  align-items: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin: 20px 0;
+}
+
+.social-norm-bar .progress-meter {
+  display: flex;
+  justify-content: space-between;
+  width: 60%;
+}
+
+.social-norm-bar .progress {
+  margin-bottom: 0;
+}
+
+.piui-form .form-input {
   padding-bottom: 15px;
+}
+
+.piui-form.channels-form .form-input {
+  padding-bottom: 0;
 }
 
 .separator {
@@ -111,8 +149,31 @@ body {
 
 .footer-container {
   display: flex;
+  justify-content: space-between;
+}
+
+.footer-ts {
+  flex: 1;
+  text-align: left;
 }
 
 h1 {
   font-size: 3em;
+}
+
+.bs-slider-wrapper {
+  width: 57%;
+  margin-left: 10px;
+}
+
+.bs-slider-wrapper .slider.slider-horizontal {
+  width: 100%;
+}
+
+.bs-slider-wrapper .slider-track-high {
+	background-color: white;
+}
+
+.bs-slider-wrapper .slider-selection {
+	background: #337ab7 !important;
 }

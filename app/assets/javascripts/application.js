@@ -17,7 +17,9 @@
 
 $( document ).ready(function() {
   $('input.bs-checkbox').bootstrapSwitch();
+  $('input.bs-slider-tt').slider({tooltip: 'always'});
 });
+
 
 $(document).on('turbolinks:load', function() {
   console.log("HELLO");

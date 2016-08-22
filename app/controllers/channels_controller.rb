@@ -15,10 +15,13 @@ class ChannelsController < ApplicationController
 
     @uptime_data_cumu = $dbclient.query(uptime_query_cumu)
     @uptime_data_sts = $dbclient.query(uptime_query_sts)
+		# @uptime_data_foo = $dbclient.query(uptime_query_foo)
 
 		@uptime_data_cumu.each do |channel|
 			uptime = @uptime_data_sts.find {|c| c["Channel"] == channel["Channel"]}.try(:[],"Uptime")
-		  uptime && ["DailyUptime", "WeeklyUptime", "MonthlyUptime"].each { |term| channel[term] += uptime }
+			# uptime2 = @uptime_data_foo.find {|c| c["Channel"] == channel["Channel"]}.try(:[],"Uptime44")
+		  # uptime && ["DailyUptime", "WeeklyUptime", "MonthlyUptime"].each { |term| channel[term] += uptime + uptime2 }
+			uptime && ["DailyUptime", "WeeklyUptime", "MonthlyUptime"].each { |term| channel[term] += uptime }
 			# uptime && channel["DailyUptime"] += uptime // single change
 		end
 
@@ -28,6 +31,17 @@ class ChannelsController < ApplicationController
 
     @reception_quality = $dbclient.query(reception_quality_query).first['RecepQuality']
 
+		if ['day', 'week', 'month'].include? @period
+			norm_query_result = $dbclient.query(norm_query)
+			key = if @period == 'day'
+				'DailySocialConsumption'
+			elsif @period == 'week'
+				'WeeklySocialConsumption'
+			else
+				'MonthlySocialConsumption'
+			end
+			@channel[:normRatio] = (@channel[:Power]*100/norm_query_result.first[key]).round(2)
+		end
     render :channel
   end
 
@@ -54,7 +68,7 @@ class ChannelsController < ApplicationController
   end
 
   def update
-    $dbclient.query("UPDATE Channels_S SET #{channel_params.map{|k,v| "#{k}='#{v}'"}.join(', ')} where Channel = #{params[:id]}")
+    $dbclient.query("UPDATE Channels_S SET #{channel_params.map{|k,v| v == 'NULL' ? "#{k} = NULL" : "#{k}='#{v}'"}.join(', ')} where Channel = #{params[:id]}")
     $dbclient.query("REPLACE into Categories (Category) (select Category from Channels_S where Category is not null and not category=\"\" and Category not in (Select Category from Categories) group by Category)")
     $dbclient.query("REPLACE into Components (Component) (select Component from Channels_S where Component is not null and not component=\"\" and Component not in (Select Component from Components) group by Component)")
     redirect_to action: :edit, id: params[:id]
@@ -184,6 +198,33 @@ and transmitter NOT IN (Select Transmitter from Channels_S where Transmitter is 
 and TIMEDIFF(current_timestamp,Time) < 4000000
 group by round(Transmitter,-2)
 order by Time desc'
+end
+
+def norm_query
+	"select round(tab1.Value * tab2.Month * tab3.Persons * tab4.Decile * tab5.Province * tab6.DailyRatio,3) as DailySocialConsumption,
+	round(tab1.Value * tab2.Month * tab3.Persons * tab4.Decile * tab5.Province * (tab7.WeeklyRatio + tab6.DailyRatio),3) as WeeklySocialConsumption,
+	round(tab1.Value * tab2.Month * tab3.Persons * tab4.Decile * tab5.Province * (tab8.MonthlyRatio + tab6.DailyRatio),3) as MonthlySocialConsumption
+	from
+	(select Value from GenSettings where Indx = 'AvgSocialConsumption') tab1,
+	(select Month from SocialComparison where ID = (select month(current_date()))) tab2,
+	(select Persons from SocialComparison where ID = (select Value from GenSettings where Indx = 'SocialCompPersons')) tab3,
+	(select Decile from SocialComparison where ID = (select Value from GenSettings where Indx = 'SocialCompDecile')) tab4,
+	(select Province from SocialComparison where ID = (select Value from GenSettings where Indx = 'SocialCompProvince')) tab5,
+	(select (ifnull(tab10.D,0) + tab11.m)/day(last_day(curdate())) as DailyRatio
+	from
+		(select IF (month(curdate()) BETWEEN 1 AND 2 or month(curdate()) = 12, sum(HourWinter)/24,
+		IF (month(curdate()) BETWEEN 3 AND 5 or month(curdate()) BETWEEN 9 AND 11, sum(HourTransition)/24,
+		IF (month(curdate()) BETWEEN 6 AND 8, sum(HourSummer)/24,null))) as D
+		from SocialComparison where ID < hour(current_time())) tab10,
+		(select IF (month(curdate()) BETWEEN 1 AND 2 or month(curdate()) = 12,
+			(HourWinter/24)*(time_to_sec(maketime(0,minute(current_time()),second((current_time()))))/3600),
+		IF (month(curdate()) BETWEEN 3 AND 5 or month(curdate()) BETWEEN 9 AND 11,
+			(HourTransition/24)*(time_to_sec(maketime(0,minute(current_time()),second((current_time()))))/3600),
+		IF (month(curdate()) BETWEEN 6 AND 8,
+			(HourSummer/24)*(time_to_sec(maketime(0,minute(current_time()),second((current_time()))))/3600),null))) as m
+		from SocialComparison where ID = hour(current_time())) tab11) tab6,
+	(select (dayofweek(curdate())-1)/day(last_day(curdate()))as WeeklyRatio) tab7,
+	(select (dayofmonth(curdate())-1) / day(last_day(curdate())) as MonthlyRatio) tab8;"
 end
 
 end

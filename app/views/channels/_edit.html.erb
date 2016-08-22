@@ -5,7 +5,7 @@
   <%= render partial: 'channel_status_desc' %>
 </div>
 <div class='section stretch form-container'>
-  <%= form_tag(channel_path(@channel[:Channel]), class: 'channel-form', method: "patch") do %>
+  <%= form_tag(channel_path(@channel[:Channel]), class: 'piui-form channels-form', method: "patch") do %>
     <div class='form-input'>
       <label for='ch_Name'>שם הערוץ</label>
       <input class='form-control' type='text' id='ch_Name' name='Name' value='<%= @channel[:Name] %>' />
@@ -32,6 +32,7 @@
       <label for='ch_Transmitter'>משדר מקושר</label>
       <select class='form-control' type='text' id='ch_Transmitter' name='Transmitter' value='<%= @channel[:Transmitter] %>'>
         <option selected value='<%= @channel[:Transmitter] %>'> (<%= @channel[:Transmitter] %> <%= "לא " unless @channel[:Transmitter].present? %>מוגדר כרגע)</option>
+        <option value='NULL'> NULL </option>
         <% @transmitters.map do |transmitter|  %>
           <option value='<%= transmitter["Transmitter"] %>'><%= transmitter["Transmitter"] %> (<%=transmitter["last seen"] %>)</option>
         <% end %>

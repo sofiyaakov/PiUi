@@ -11,11 +11,19 @@ class SettingsController < ApplicationController
     # ]
   end
 
-  def internet
+  def general
+		@sync[:Site] = @syncSettings.find {|setting| setting['Indx'] == 'Site'}
+		@sync[:SocialCompProvince] = @syncSettings.find {|setting| setting['Indx'] == 'SocialCompProvince'}['Value']
+		@sync[:SocialCompPersons] = @syncSettings.find {|setting| setting['Indx'] == 'SocialCompPersons'}['Value']
+		@sync[:SocialCompDecile] = @syncSettings.find {|setting| setting['Indx'] == 'SocialCompDecile'}['Value']
+  end
+
+	def generalUpdate
+		['Site', 'SocialCompProvince', 'SocialCompPersons', 'SocialCompDecile'].each {|setting| $dbclient.query("UPDATE GenSettings SET Value='#{general_params[setting]}' where Indx = '#{setting}'") if general_params[setting] }
+    redirect_to action: :general
   end
 
   def sync
-		@sync[:Site] = @syncSettings.find {|setting| setting['Indx'] == 'Site'}
 		@sync[:Completion] = @syncSettings.find {|setting| setting['Indx'] == 'POSTInProgress'}["Value"] == '1' && $dbclient.query(sync_completion_query).first["Completion"]
   end
 
@@ -23,14 +31,18 @@ class SettingsController < ApplicationController
   end
 
 	def syncUpdate
-		['OfflineMode', 'Site'].each {|setting| $dbclient.query("UPDATE GenSettings SET Value='#{sync_params[setting]}' where Indx = '#{setting}'") if sync_params[setting] }
-    redirect_to action: :sync, id: params[:id]
+		['OfflineMode', 'RT_OfflineMode'].each {|setting| $dbclient.query("UPDATE GenSettings SET Value='#{sync_params[setting]}' where Indx = '#{setting}'") if sync_params[setting] }
+    redirect_to action: :sync
   end
 
 	private
 
   def sync_params
-    params.permit(:OfflineMode, :Site)
+    params.permit(:OfflineMode, :RT_OfflineMode)
+  end
+
+	def general_params
+    params.permit(:Site, :SocialCompProvince, :SocialCompPersons, :SocialCompDecile)
   end
 
 	def sync_completion_query

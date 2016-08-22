@@ -1,0 +1,57 @@
+<div class='mainContainer'>
+  <div class='section'>
+    <h1><span class="label label-primary">הגדרות כלליות</span></h1>
+  </div>
+
+  <div class='section stretch form-container'>
+    <%= form_tag(settings_generalUpdate_path, class: 'piui-form', method: "patch") do %>
+      <div class='form-input'>
+        <label for='ch_Site'>שם האתר</label>
+        <input class='form-control' type='text' id='ch_Site' name='Site' value='<%= @sync[:Site]['Value'] %>' />
+      </div>
+      <div class='form-input'>
+        <label for='ch_SocialCompProvince'>מחוז</label>
+        <select class='form-control' type='text' id='ch_SocialCompProvince' name='SocialCompProvince' value='<%= @sync[:SocialCompProvince] %>'>
+          <option <%= 'selected' if @sync[:SocialCompProvince] == '1' %> value='1'> צפון </option>
+          <option <%= 'selected' if @sync[:SocialCompProvince] == '2' %> value='2'> חיפה </option>
+          <option <%= 'selected' if @sync[:SocialCompProvince] == '3' %> value='3'> דן </option>
+          <option <%= 'selected' if @sync[:SocialCompProvince] == '4' %> value='4'> ירושלים </option>
+          <option <%= 'selected' if @sync[:SocialCompProvince] == '5' %> value='5'> דרום </option>
+        </select>
+      </div>
+      <div class='form-input'>
+        <label for='ch_SocialCompPersons'>מספר נפשות</label>
+        <div dir='ltr' class='bs-slider-wrapper'>
+          <input name='SocialCompPersons' id="ch_SocialCompPersons" type="text"
+            data-provide="slider"
+            data-slider-ticks="[1, 2, 3, 4, 5, 6]"
+            data-slider-ticks-labels='["1", "2", "3", "4", "5", "6+"]'
+            data-slider-min="1"
+            data-slider-max="6"
+            data-slider-step="1"
+            data-slider-value="<%= @sync[:SocialCompPersons] %>"
+            data-slider-tooltip="hide" />
+          </div>
+      </div>
+      <div class='form-input'>
+        <label for='ch_SocialCompDecile'>רמת הכנסה (₪)</label>
+        <div dir='ltr' class='bs-slider-wrapper'>
+          <input name='SocialCompDecile' id="ch_SocialCompDecile" type="text"
+            data-provide="slider"
+            data-slider-ticks="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
+            data-slider-ticks-labels='["<4100", "6.2k", "8.5k", "10.8k", "13.4k", "16.5k", "20.3k", "25.6k", "<35.1k", ">35.1k"]'
+            data-slider-min="1"
+            data-slider-max="6"
+            data-slider-step="1"
+            data-slider-value="<%= @sync[:SocialCompDecile] %>"
+            data-slider-tooltip="hide" />
+          </div>
+      </div>
+      <div class='form-input'>
+        <h4><b><%= "שם האתר עודכן לאחרונה ב: #{@sync[:Site]['Time'].strftime("%d/%m/%Y - %H:%M")}" %></b></h4>
+        <input type='submit' class='btn-save btn btn-lg btn-primary' value='שמור'>
+      </div>
+    <% end %>
+  </div>
+
+</div>

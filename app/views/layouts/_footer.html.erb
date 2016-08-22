@@ -1,4 +1,8 @@
 <div class='footer-container'>
-  <div><%= number = 3 ; true && image_tag("wifi-#{number}.png", title: "Some tooltip", class:'footer-icon')%></div>
-  <div><%= number = 3 ; true && image_tag("wifi-#{number}.png", class:'footer-icon')%></div>
+  <% bla = [{"Transmitter" => "3", "Status" => 3}, {"Transmitter" => "7", "Status" => 1}, {"Transmitter" => "13", "Status" => 0}] %>
+  <% bla.map do |t| %>
+    <div><%= true && image_tag("wifi-#{t["Status"]}.png", title: "Transmitter #{t["Transmitter"]}", class:'footer-icon')%></div>
+  <% end %>
+
+  <div class='footer-ts'><h4><%= Time.now.strftime("%d/%m/%Y - %H:%M") %></h4></div>
 </div>

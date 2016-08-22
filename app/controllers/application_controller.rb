@@ -8,6 +8,7 @@ class ApplicationController < ActionController::Base
     @syncSettings = $dbclient.query("SELECT * from GenSettings")
     @sync = {
       OfflineMode: @syncSettings.find {|setting| setting['Indx'] == 'OfflineMode'}['Value'].to_i,
+      RT_OfflineMode: @syncSettings.find {|setting| setting['Indx'] == 'RT_OfflineMode'}['Value'].to_i,
       TimeStamp: @syncSettings.find {|setting| setting['Indx'] == 'lastCompleteSyncedID'}['Time']
     }
   end
