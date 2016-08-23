@@ -40,7 +40,7 @@ class ChannelsController < ApplicationController
 			else
 				'MonthlySocialConsumption'
 			end
-			@channel[:normRatio] = (@channel[:Power]*100/norm_query_result.first[key]).round(2)
+			@channel[:normRatio] = (@channel[:Power]*100/norm_query_result.first[key]).round(1)
 		end
     render :channel
   end

@@ -1,8 +1,12 @@
 <div class='footer-container'>
-  <% bla = [{"Transmitter" => "3", "Status" => 3}, {"Transmitter" => "7", "Status" => 1}, {"Transmitter" => "13", "Status" => 0}] %>
-  <% bla.map do |t| %>
-    <div><%= true && image_tag("wifi-#{t["Status"]}.png", title: "Transmitter #{t["Transmitter"]}", class:'footer-icon')%></div>
+  <% bla = [{"Transmitter" => "3", "Status" => 3}, {"Transmitter" => "7", "Status" => 1}, {"Transmitter" => "13", "Status" => 0}, {"Transmitter" => "15", "Status" => 0}] %>
+  <% @boxDetails.map do |t| %>
+    <div><%= true && image_tag("bar-#{t["RecepQuality"]}.png", title: "רכיב #{t["Box"]}", class:'footer-icon')%></div>
   <% end %>
 
-  <div class='footer-ts'><h4><%= Time.now.strftime("%d/%m/%Y - %H:%M") %></h4></div>
+  <div class='footer-ts'><%= true && image_tag("energy.png", title: "הצגת גרף זמן-אמת בענן", class:'footer-icon')%></div>
+  <div class='footer-ts'><%= true && image_tag("cloud.png", title: lastSyncTimeString, class:'footer-icon')%></div>
+  <div class='footer-ts'><%= true && image_tag("icon-kibana.png", title: "קישור למערת ניתוח", class:'footer-icon')%></div>
+  <div class='footer-ts'><h4><%= Time.now.strftime("%H:%M  - %d/%m/%Y") %></h4></div>
+
 </div>

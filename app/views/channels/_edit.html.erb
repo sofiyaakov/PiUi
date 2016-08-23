@@ -32,7 +32,7 @@
       <label for='ch_Transmitter'>משדר מקושר</label>
       <select class='form-control' type='text' id='ch_Transmitter' name='Transmitter' value='<%= @channel[:Transmitter] %>'>
         <option selected value='<%= @channel[:Transmitter] %>'> (<%= @channel[:Transmitter] %> <%= "לא " unless @channel[:Transmitter].present? %>מוגדר כרגע)</option>
-        <option value='NULL'> NULL </option>
+        <option value='NULL'> ללא קישור למשדר </option>
         <% @transmitters.map do |transmitter|  %>
           <option value='<%= transmitter["Transmitter"] %>'><%= transmitter["Transmitter"] %> (<%=transmitter["last seen"] %>)</option>
         <% end %>

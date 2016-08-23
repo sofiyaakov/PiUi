@@ -135,8 +135,8 @@ module ChannelsHelper
   end  
 
   def load_percent
-    #return 50
-    return ((@channel[:Power]/220)/@channel[:MaxCurrent])*100
+    return ((@channel[:Power]/220)/@channel[:MaxCurrent])*100 if @period == 'realtime'
+    return ((@channel[:Power]/220)/@channel[:MaxCurrent])*100*1000 if @period == '60min'
   end
 
 end

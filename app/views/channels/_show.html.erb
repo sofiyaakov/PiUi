@@ -29,10 +29,11 @@
 	 <h2><%= uptime_cost_string %></h2>
 </div>
 
-<% if @period == 'realtime' && @channel[:Active] == 1 && @channel[:Status] == 4 %>
+<% if (@period == 'realtime' || @period == '60min') && @channel[:Active] == 1 && @channel[:Status] == 4 %>
 	<div title='ניצולת' class="progress">
   		<div class="progress-bar progress-bar-info progress-bar-striped color-<%= 'medium' %>" role="progressbar"
   		aria-valuenow="100%" aria-valuemin="0" aria-valuemax="100" style="width:<%=load_percent%>%">
+  		
   		</div>
       ניצולת
 	</div>
