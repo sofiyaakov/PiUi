@@ -14,24 +14,26 @@ class ChannelsController < ApplicationController
     @taoz_expired = $dbclient.query(taoz_query).first['Time']
     @taoz_next_level_time = $dbclient.query(taoz_next_level_query).first['Time']
 
-    @uptime_data_cumu = $dbclient.query(uptime_query_cumu)
-    @uptime_data_sts = $dbclient.query(uptime_query_sts)
-		# @uptime_data_foo = $dbclient.query(uptime_query_foo)
-
-		@uptime_data_cumu.each do |channel|
-			uptime = @uptime_data_sts.find {|c| c["Channel"] == channel["Channel"]}.try(:[],"Uptime")
-			# uptime2 = @uptime_data_foo.find {|c| c["Channel"] == channel["Channel"]}.try(:[],"Uptime44")
-		  # uptime && ["DailyUptime", "WeeklyUptime", "MonthlyUptime"].each { |term| channel[term] += uptime + uptime2 }
-			uptime && ["DailyUptime", "WeeklyUptime", "MonthlyUptime"].each { |term| channel[term] += uptime }
-			# uptime && channel["DailyUptime"] += uptime // single change
-		end
-
-		@channel[:daily_uptime] =    @uptime_data_cumu.find {|ch| ch['Channel'] == @channel[:Channel]}.try(:[],'DailyUptime'   ) || 0
-    @channel[:weekly_uptime] =   @uptime_data_cumu.find {|ch| ch['Channel'] == @channel[:Channel]}.try(:[],'WeeklyUptime'  ) || 0
-    @channel[:monthly_uptime] =  @uptime_data_cumu.find {|ch| ch['Channel'] == @channel[:Channel]}.try(:[],'MonthlyUptime' ) || 0
-
-
+		
 		if ['day', 'week', 'month'].include? @period
+
+      if @channel[:Component] != ''
+        @uptime_data_cumu = $dbclient.query(uptime_query_cumu)
+        @uptime_data_sts = $dbclient.query(uptime_query_sts)
+        # @uptime_data_foo = $dbclient.query(uptime_query_foo)
+
+        @uptime_data_cumu.each do |channel|
+          uptime = @uptime_data_sts.find {|c| c["Channel"] == channel["Channel"]}.try(:[],"Uptime")
+          # uptime2 = @uptime_data_foo.find {|c| c["Channel"] == channel["Channel"]}.try(:[],"Uptime44")
+          # uptime && ["DailyUptime", "WeeklyUptime", "MonthlyUptime"].each { |term| channel[term] += uptime + uptime2 }
+          uptime && ["DailyUptime", "WeeklyUptime", "MonthlyUptime"].each { |term| channel[term] += uptime }
+          # uptime && channel["DailyUptime"] += uptime // single change
+          @channel[:daily_uptime] =    @uptime_data_cumu.find {|ch| ch['Channel'] == @channel[:Channel]}.try(:[],'DailyUptime'   ) || 0
+          @channel[:weekly_uptime] =   @uptime_data_cumu.find {|ch| ch['Channel'] == @channel[:Channel]}.try(:[],'WeeklyUptime'  ) || 0
+          @channel[:monthly_uptime] =  @uptime_data_cumu.find {|ch| ch['Channel'] == @channel[:Channel]}.try(:[],'MonthlyUptime' ) || 0
+        end
+      end
+
       @taoz_cost_data = $dbclient.query(taoz_cost_query).first(16)
       @channel[:taoz] = @taoz_cost_data.find {|ch| ch['Channel'] == @channel[:Channel]}.try(:[],'Cost') || 0
       @split_factor = $dbclient.query(split_factor_query).first['Ratio']
@@ -40,16 +42,17 @@ class ChannelsController < ApplicationController
       @taoz_split_hill = taoz_split_data.find {|setting| setting['TAOZ_Level'] == 2}['Cost'] * 100 
       @taoz_split_peak = taoz_split_data.find {|setting| setting['TAOZ_Level'] == 3}['Cost'] * 100 
 
-
-			norm_query_result = $dbclient.query(norm_query)
-			key = if @period == 'day'
-				'DailySocialConsumption'
-			elsif @period == 'week'
-				'WeeklySocialConsumption'
-			else
-				'MonthlySocialConsumption'
-			end
-			@channel[:normRatio] = (@channel[:Power]*100/norm_query_result.first[key]).round(1)
+      if @channel[:ChannelMaster] == 0 
+  			norm_query_result = $dbclient.query(norm_query)
+  			key = if @period == 'day'
+  				'DailySocialConsumption'
+  			elsif @period == 'week'
+  				'WeeklySocialConsumption'
+  			else
+  				'MonthlySocialConsumption'
+  			end
+  			@channel[:normRatio] = (@channel[:Power]*100/norm_query_result.first[key]).round(1)
+      end
 		end
     render :channel
   end
