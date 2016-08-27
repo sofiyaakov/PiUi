@@ -57,6 +57,14 @@ module ChannelsHelper
     "עלות כוללת: #{@channel[:fixed] || "0"} ש\"ח"
   end
 
+  def taoz_cost_string
+    #return "עלות בתעריף קבוע: #{(@channel[:fixed]*100).round(2)} אג' לשעה" if (@period == 'realtime' || @period == '60min') && @channel[:fixed].to_f < 0.05
+    #return "עלות בתעריף קבוע: #{(@channel[:fixed]*100).round(0)} אג' לשעה" if (@period == 'realtime' || @period == '60min') && @channel[:fixed].to_i < 1
+    #return "עלות בתעריף קבוע: #{@channel[:fixed].round(2) || "0"} ש\"ח לשעה" if @period == 'realtime'
+    return if (@period == 'realtime' || @period == '60min')
+    "עלות בתעו\"ז: #{@channel[:taoz] || "0"} ש\"ח"
+  end
+
   def taoz_string
       #return if @channel[:Active] == 0
       return "תעריף נוכחי " 
@@ -121,22 +129,62 @@ module ChannelsHelper
     case @period
       when 'day'
         return if @channel[:daily_uptime] == 0
-        return "עלות: #{(@channel[:fixed]*100/(@channel[:daily_uptime])*60).round(0)} אג' לשעה" if (@channel[:fixed]/(@channel[:daily_uptime])*60) <1
-        return "עלות: #{(@channel[:fixed]/(@channel[:daily_uptime])*60).round(2)} ש\"ח לשעה"
+        return "עלות לשעה: #{(@channel[:fixed]*100/(@channel[:daily_uptime])*60).round(0)} אג', #{(@channel[:taoz]*100/(@channel[:daily_uptime])*60).round(0)} אג' בתעו\"ז" if (@channel[:fixed]/(@channel[:daily_uptime])*60) <1
+        return "עלות לשעה: #{(@channel[:fixed]/(@channel[:daily_uptime])*60).round(2)} ש\"ח, #{(@channel[:taoz]/(@channel[:daily_uptime])*60).round(2)} ש\"ח בתעו\"ז"
       when 'week'
         return if @channel[:weekly_uptime] == 0
-        return "עלות: #{(@channel[:fixed]*100/(@channel[:weekly_uptime])*60).round(0)} אג' לשעה" if (@channel[:fixed]/(@channel[:weekly_uptime])*60) <1
-        return "עלות: #{(@channel[:fixed]/(@channel[:weekly_uptime])*60).round(2)} ש\"ח לשעה" 
+        return "עלות לשעה: #{(@channel[:fixed]*100/(@channel[:weekly_uptime])*60).round(0)} אג', #{(@channel[:taoz]*100/(@channel[:weekly_uptime])*60).round(0)} אג' בתעו\"ז" if (@channel[:fixed]/(@channel[:weekly_uptime])*60) <1
+        return "עלות לשעה: #{(@channel[:fixed]/(@channel[:weekly_uptime])*60).round(2)} ש\"ח, #{(@channel[:taoz]/(@channel[:weekly_uptime])*60).round(2)} ש\"ח בתעו\"" 
       when 'month'
         return if @channel[:monthly_uptime] == 0
-        return "עלות: #{(@channel[:fixed]*100/(@channel[:monthly_uptime])*60).round(0)} אג' לשעה" if (@channel[:fixed]/(@channel[:monthly_uptime])*60) <1
-        return "עלות: #{(@channel[:fixed]/(@channel[:monthly_uptime])*60).round(2)} ש\"ח לשעה" 
+        return "עלות לשעה: #{(@channel[:fixed]*100/(@channel[:monthly_uptime])*60).round(0)} אג', #{(@channel[:taoz]*100/(@channel[:monthly_uptime])*60).round(0)} אג' בתעו\"ז" if (@channel[:fixed]/(@channel[:monthly_uptime])*60) <1
+        return "עלות לשעה: #{(@channel[:fixed]/(@channel[:monthly_uptime])*60).round(2)} ש\"ח, #{(@channel[:taoz]/(@channel[:monthly_uptime])*60).round(2)} ש\"ח בתעו\"ז" 
     end
   end  
 
   def load_percent
     return ((@channel[:Power]/220)/@channel[:MaxCurrent])*100 if @period == 'realtime'
     return ((@channel[:Power]/220)/@channel[:MaxCurrent])*100*1000 if @period == '60min'
+  end
+
+  def rt_link
+    case @channel[:channel]
+    when '1'
+      return "http://213.57.26.120/goto/4aaa25b3999f671d69f50a99fdba4460"
+    when '2'
+      return
+    when '3'
+      return
+    when '4'
+      return
+    when '5'
+      return
+    when '6'
+      return
+    when '7'
+      return
+    when '8'
+      return
+    when '9'
+      return
+    when '9'
+      return
+    when '10'
+      return
+    when '11'
+      return
+    when '12'
+      return
+    when '13'
+      return
+    when '14'
+      return
+    when '15'
+      return
+    when '16'
+      return
+
+    end
   end
 
 end

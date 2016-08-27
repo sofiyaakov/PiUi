@@ -5,8 +5,9 @@ class ChannelsController < ApplicationController
 
   def show
     @period = params['period'] || 'realtime'
+
     @channels_data = $dbclient.query(power_query).first(16)
-    @channel[:Power] = @channels_data.find {|ch| ch['Channel'] == @channel[:Channel]}.try(:[],'Power')
+    @channel[:Power] = @channels_data.find {|ch| ch['Channel'] == @channel[:Channel]}.try(:[],'Power') 
     @cost_data = $dbclient.query(cost_query).first(16)
     @channel[:fixed] = @cost_data.find {|ch| ch['Channel'] == @channel[:Channel]}.try(:[],'Cost') || 0
     @taoz = $dbclient.query(taoz_query).first['nLevel']
@@ -29,9 +30,17 @@ class ChannelsController < ApplicationController
     @channel[:weekly_uptime] =   @uptime_data_cumu.find {|ch| ch['Channel'] == @channel[:Channel]}.try(:[],'WeeklyUptime'  ) || 0
     @channel[:monthly_uptime] =  @uptime_data_cumu.find {|ch| ch['Channel'] == @channel[:Channel]}.try(:[],'MonthlyUptime' ) || 0
 
-    @reception_quality = $dbclient.query(reception_quality_query).first['RecepQuality']
 
 		if ['day', 'week', 'month'].include? @period
+      @taoz_cost_data = $dbclient.query(taoz_cost_query).first(16)
+      @channel[:taoz] = @taoz_cost_data.find {|ch| ch['Channel'] == @channel[:Channel]}.try(:[],'Cost') || 0
+      @split_factor = $dbclient.query(split_factor_query).first['Ratio']
+      taoz_split_data = $dbclient.query(taoz_split_query).first(3) 
+      @taoz_split_low = taoz_split_data.find {|setting| setting['TAOZ_Level'] == 1}['Cost'] * 100 
+      @taoz_split_hill = taoz_split_data.find {|setting| setting['TAOZ_Level'] == 2}['Cost'] * 100 
+      @taoz_split_peak = taoz_split_data.find {|setting| setting['TAOZ_Level'] == 3}['Cost'] * 100 
+
+
 			norm_query_result = $dbclient.query(norm_query)
 			key = if @period == 'day'
 				'DailySocialConsumption'
@@ -94,8 +103,8 @@ class ChannelsController < ApplicationController
   end
 
   def get_channel
-    channel_id = (params[:id] || 1).to_i - 1
-    @channel = @channels[channel_id]
+    @channel_id = (params[:id] || 1).to_i - 1
+    @channel = @channels[@channel_id]
   end
 
   def power_query
@@ -103,13 +112,35 @@ class ChannelsController < ApplicationController
     when 'realtime'
       'select Channel,Power from (select * from RT where STS_Sync = 0 and unix_timestamp()-unix_timestamp(Time)<13  order by ID desc)a group by Channel'
     when '60min'
-      'Select tab1.Channel, round(tab1.Power+tab2.Power,3) as Power from (Select Channel,sum(Power)/600/1000 as Power from RT where STS_Sync = 0 group by Channel) tab1, (Select Channel,sum(Power)/60/1000 as Power from STS where ID >=(select min(id) from STS where  ID > (Select max(ID)-5000 from STS) and unix_timestamp()-unix_timestamp(Time)<=3600) group by Channel) tab2 where tab1.Channel=tab2.Channel'
+      'select tab0.Channel,round(sum(tab0.Power),3) as Power from
+        ((Select Channel,sum(Power)/600/1000 as Power from RT where STS_Sync = 0 group by Channel)
+        UNION
+        (Select Channel,sum(Power)/60/1000 as Power from STS where ID >=(select min(id) from STS where  ID > (Select max(ID)-5000 from STS) and unix_timestamp()-unix_timestamp(Time)<=3600) group by Channel))tab0
+      group by tab0.Channel'
     when 'day'
-      'Select tab1.Channel, round(tab0.Daily+tab1.Power+tab2.Power,3) as Power from (Select Channel,sum(Daily) as Daily from CumuConsumption_new group by Channel) tab0, (Select Channel,sum(Power)/600/1000 as Power from RT where STS_Sync = 0 group by Channel) tab1, (Select Channel,sum(Power)/60/1000 as Power from STS where ID > (select Value from GenSettings where Indx= "LastSTSidCumuConsump") group by Channel) tab2 where tab0.Channel=tab1.Channel and tab1.Channel=tab2.Channel'
+      'select tab0.Channel,round(sum(tab0.Power),3) as Power from
+        ((Select Channel,sum(Daily) as Power from CumuConsumption_new group by Channel)
+        UNION
+        (Select Channel,sum(Power)/600/1000 as Power from RT where STS_Sync = 0 group by Channel)
+        UNION
+        (Select Channel,sum(Power)/60/1000 as Power from STS where ID > (select Value from GenSettings where Indx= "LastSTSidCumuConsump") group by Channel))tab0
+      group by tab0.Channel'
     when 'week'
-      'Select tab1.Channel, round(tab0.Weekly+tab1.Power+tab2.Power,3) as Power from (Select Channel,sum(Weekly) as Weekly from CumuConsumption_new group by Channel) tab0, (Select Channel,sum(Power)/600/1000 as Power from RT where STS_Sync = 0 group by Channel) tab1, (Select Channel,sum(Power)/60/1000 as Power from STS where ID > (select Value from GenSettings where Indx= "LastSTSidCumuConsump") group by Channel) tab2 where tab0.Channel=tab1.Channel and tab1.Channel=tab2.Channel'
+      'select tab0.Channel,round(sum(tab0.Power),3) as Power from
+        ((Select Channel,sum(Weekly) as Power from CumuConsumption_new group by Channel)
+        UNION
+        (Select Channel,sum(Power)/600/1000 as Power from RT where STS_Sync = 0 group by Channel)
+        UNION
+        (Select Channel,sum(Power)/60/1000 as Power from STS where ID > (select Value from GenSettings where Indx= "LastSTSidCumuConsump") group by Channel))tab0
+      group by tab0.Channel'
     when 'month'
-      'Select tab1.Channel, round(tab0.Monthly+tab1.Power+tab2.Power,3) as Power from (Select Channel,sum(Monthly) as Monthly from CumuConsumption_new group by Channel) tab0, (Select Channel,sum(Power)/600/1000 as Power from RT where STS_Sync = 0 group by Channel) tab1, (Select Channel,sum(Power)/60/1000 as Power from STS where ID > (select Value from GenSettings where Indx= "LastSTSidCumuConsump") group by Channel) tab2 where tab0.Channel=tab1.Channel and tab1.Channel=tab2.Channel'
+      'select tab0.Channel,round(sum(tab0.Power),3) as Power from
+        ((Select Channel,sum(Monthly) as Power from CumuConsumption_new group by Channel)
+        UNION
+        (Select Channel,sum(Power)/600/1000 as Power from RT where STS_Sync = 0 group by Channel)
+        UNION
+        (Select Channel,sum(Power)/60/1000 as Power from STS where ID > (select Value from GenSettings where Indx= "LastSTSidCumuConsump") group by Channel))tab0
+      group by tab0.Channel'
     end
   end
 
@@ -122,33 +153,40 @@ class ChannelsController < ApplicationController
       group by Channel'
 
       when '60min'
-      'Select tab1.Channel, round(tab1.Power+tab2.Power,2) as Cost from
-      (Select Channel,sum(Power*(select fixed from ElecTariffs where Type = "Fixed" and curdate() BETWEEN fromDate and toDate))/600/1000/100 as Power from RT where STS_Sync = 0 group by Channel) tab1,
-      (Select Channel,sum(Power*Fixed)/60/1000/100 as Power from STS where ID >=(select min(id) from STS where ID > (select max(ID)-5000 from STS) and unix_timestamp()-unix_timestamp(Time)<=3600) group by Channel) tab2
-      where tab1.Channel=tab2.Channel'
+        'Select tab0.Channel, round(sum(tab0.Cost),2) as Cost from
+          ((Select Channel,sum(Power*(select fixed from ElecTariffs where Type = "Fixed" and curdate() BETWEEN fromDate and toDate))/600/1000/100 as Cost from RT where STS_Sync = 0 group by Channel)
+          UNION
+          (Select Channel,sum(Power*Fixed)/60/1000/100 as Cost from STS where ID >=(select min(id) from STS where ID > (select max(ID)-5000 from STS) and unix_timestamp()-unix_timestamp(Time)<=3600) group by Channel))tab0
+        group by tab0.Channel'
 
     when 'day'
-      'Select tab1.Channel, round(tab0.DailyFixedCost+tab1.Cost+tab2.Cost,2) as Cost from
-      (Select Channel,sum(DailyFixedCost) as DailyFixedCost from CumuConsumption_new group by Channel) tab0,
-      (Select Channel,sum(Power*(select fixed from ElecTariffs where Type = "Fixed" and curdate() BETWEEN fromDate and toDate))/600/1000/100 as Cost from RT where STS_Sync = 0 group by Channel) tab1,
-      (Select Channel,sum(Power*Fixed)/60/1000/100 as Cost from STS where ID >(select Value from GenSettings where Indx= "LastSTSidCumuConsump") group by Channel) tab2
-      where tab0.Channel=tab1.Channel and tab1.Channel=tab2.Channel;'
+      'Select tab0.Channel, round(sum(tab0.Cost),2) as Cost from
+        ((Select Channel,sum(DailyFixedCost) as Cost from CumuConsumption_new group by Channel)
+        UNION
+        (Select Channel,sum(Power*(select fixed from ElecTariffs where Type = "Fixed" and curdate() BETWEEN fromDate and toDate))/600/1000/100 as Cost from RT where STS_Sync = 0 group by Channel)
+        UNION
+        (Select Channel,sum(Power*Fixed)/60/1000/100 as Cost from STS where ID >(select Value from GenSettings where Indx= "LastSTSidCumuConsump") group by Channel))tab0
+      group by tab0.Channel'
 
 
     when 'week'
-      'Select tab1.Channel, round(tab0.WeeklyFixedCost+tab1.Cost+tab2.Cost,2) as Cost from
-      (Select Channel,sum(WeeklyFixedCost) as WeeklyFixedCost from CumuConsumption_new group by Channel) tab0,
-      (Select Channel,sum(Power*(select fixed from ElecTariffs where Type = "Fixed" and curdate() BETWEEN fromDate and toDate))/600/1000/100 as Cost from RT where STS_Sync = 0 group by Channel) tab1,
-      (Select Channel,sum(Power*Fixed)/60/1000/100 as Cost from STS where ID >(select Value from GenSettings where Indx= "LastSTSidCumuConsump") group by Channel) tab2
-      where tab0.Channel=tab1.Channel and tab1.Channel=tab2.Channel;'
+      'Select tab0.Channel, round(sum(tab0.Cost),2) as Cost from
+        ((Select Channel,sum(WeeklyFixedCost) as Cost from CumuConsumption_new group by Channel)
+        UNION
+        (Select Channel,sum(Power*(select fixed from ElecTariffs where Type = "Fixed" and curdate() BETWEEN fromDate and toDate))/600/1000/100 as Cost from RT where STS_Sync = 0 group by Channel)
+        UNION
+        (Select Channel,sum(Power*Fixed)/60/1000/100 as Cost from STS where ID >(select Value from GenSettings where Indx= "LastSTSidCumuConsump") group by Channel))tab0
+      group by tab0.Channel'
 
 
     when 'month'
-      'Select tab1.Channel, round(tab0.MonthlyFixedCost+tab1.Cost+tab2.Cost,2) as Cost from
-      (Select Channel,sum(MonthlyFixedCost) as MonthlyFixedCost from CumuConsumption_new group by Channel) tab0,
-      (Select Channel,sum(Power*(select fixed from ElecTariffs where Type = "Fixed" and curdate() BETWEEN fromDate and toDate))/600/1000/100 as Cost from RT where STS_Sync = 0 group by Channel) tab1,
-      (Select Channel,sum(Power*Fixed)/60/1000/100 as Cost from STS where ID >(select Value from GenSettings where Indx= "LastSTSidCumuConsump") group by Channel) tab2
-      where tab0.Channel=tab1.Channel and tab1.Channel=tab2.Channel;'
+      'Select tab0.Channel, round(sum(tab0.Cost),2) as Cost from
+        ((Select Channel,sum(MonthlyFixedCost) as Cost from CumuConsumption_new group by Channel)
+        UNION
+        (Select Channel,sum(Power*(select fixed from ElecTariffs where Type = "Fixed" and curdate() BETWEEN fromDate and toDate))/600/1000/100 as Cost from RT where STS_Sync = 0 group by Channel)
+        UNION
+        (Select Channel,sum(Power*Fixed)/60/1000/100 as Cost from STS where ID >(select Value from GenSettings where Indx= "LastSTSidCumuConsump") group by Channel))tab0
+      group by tab0.Channel'
     end
   end
 
@@ -171,6 +209,84 @@ class ChannelsController < ApplicationController
     hour(now()) >= fromHour and hour(now()) < toHour))a'
   end
 
+def taoz_cost_query
+    case @period
+
+    when 'day'
+    'Select tab0.Channel, round(sum(tab0.Cost),2) as Cost from
+      ((Select Channel,sum(DailyTAOZCost) as Cost from CumuConsumption_new group by Channel)
+      UNION
+      (Select Channel,sum(Power*TAOZ)/60/1000/100 as Cost from STS where ID >(select Value from GenSettings where Indx= "LastSTSidCumuConsump") group by Channel))tab0
+      group by tab0.Channel'
+
+    when 'week'
+    'Select tab0.Channel, round(sum(tab0.Cost),2) as Cost from
+      ((Select Channel,sum(WeeklyTAOZCost) as Cost from CumuConsumption_new group by Channel)
+      UNION
+      (Select Channel,sum(Power*TAOZ)/60/1000/100 as Cost from STS where ID >(select Value from GenSettings where Indx= "LastSTSidCumuConsump") group by Channel))tab0
+      group by tab0.Channel'
+
+    when 'month'
+      'Select tab0.Channel, round(sum(tab0.Cost),2) as Cost from
+        ((Select Channel,sum(MonthlyTAOZCost) as Cost from CumuConsumption_new group by Channel)
+        UNION
+        (Select Channel,sum(Power*TAOZ)/60/1000/100 as Cost from STS where ID >(select Value from GenSettings where Indx= "LastSTSidCumuConsump") group by Channel))tab0
+        group by tab0.Channel'
+    end
+  end
+
+def taoz_split_query
+    case @period
+    when 'day'
+      "Select tab0.TAOZ_Level, ifnull(round(sum(tab0.Cost)/
+        (Select round(sum(tab0.Cost),3) as Cost from
+        ((Select Channel,sum(DailyTAOZCost) as Cost from CumuConsumption_new group by Channel)
+        UNION
+        (Select Channel,sum(Power*TAOZ)/60/1000/100 as Cost from STS where ID >(select Value from GenSettings where Indx= 'LastSTSidCumuConsump') group by Channel))tab0
+      where tab0.Channel = #{@channel_id+1}),3),0) as Cost from
+        ((Select Channel,TAOZ_Level,sum(DailyTAOZCost) as Cost from CumuConsumption_new group by Channel, TAOZ_Level)
+        UNION
+        (Select Channel,TAOZ_Level,sum(Power*TAOZ)/60/1000/100 as Cost from STS where ID >(select Value from GenSettings where Indx= 'LastSTSidCumuConsump') group by Channel,TAOZ_Level))tab0
+        where tab0.Channel = #{@channel_id+1} group by tab0.TAOZ_Level"
+
+
+    when 'week'
+      "Select tab0.TAOZ_Level, ifnull(round(sum(tab0.Cost)/
+        (Select round(sum(tab0.Cost),3) as Cost from
+        ((Select Channel,sum(WeeklyTAOZCost) as Cost from CumuConsumption_new group by Channel)
+        UNION
+        (Select Channel,sum(Power*TAOZ)/60/1000/100 as Cost from STS where ID >(select Value from GenSettings where Indx= 'LastSTSidCumuConsump') group by Channel))tab0
+      where tab0.Channel = #{@channel_id+1}),3),0) as Cost from
+        ((Select Channel,TAOZ_Level,sum(WeeklyTAOZCost) as Cost from CumuConsumption_new group by Channel, TAOZ_Level)
+        UNION
+        (Select Channel,TAOZ_Level,sum(Power*TAOZ)/60/1000/100 as Cost from STS where ID >(select Value from GenSettings where Indx= 'LastSTSidCumuConsump') group by Channel,TAOZ_Level))tab0
+        where tab0.Channel = #{@channel_id+1} group by tab0.TAOZ_Level"
+
+    when 'month'
+      "Select tab0.TAOZ_Level, ifnull(round(sum(tab0.Cost)/
+        (Select round(sum(tab0.Cost),3) as Cost from
+        ((Select Channel,sum(MonthlyTAOZCost) as Cost from CumuConsumption_new group by Channel)
+        UNION
+        (Select Channel,sum(Power*TAOZ)/60/1000/100 as Cost from STS where ID >(select Value from GenSettings where Indx= 'LastSTSidCumuConsump') group by Channel))tab0
+      where tab0.Channel = #{@channel_id+1}),3),0) as Cost from
+        ((Select Channel,TAOZ_Level,sum(MonthlyTAOZCost) as Cost from CumuConsumption_new group by Channel, TAOZ_Level)
+        UNION
+        (Select Channel,TAOZ_Level,sum(Power*TAOZ)/60/1000/100 as Cost from STS where ID >(select Value from GenSettings where Indx= 'LastSTSidCumuConsump') group by Channel,TAOZ_Level))tab0
+        where tab0.Channel = #{@channel_id+1} group by tab0.TAOZ_Level"
+
+    end
+  end
+
+def split_factor_query
+    case @period
+    when 'day'
+      "select round(time_to_sec(current_time())/86400,3) as Ratio"
+    when 'week'
+      "select round((dayofweek(curdate())-1)/7 + time_to_sec(current_time())/86400/7,2) as Ratio"
+    when 'month'
+      "select round((dayofmonth(curdate())-1) / day(last_day(curdate())) + time_to_sec(current_time())/86400/(day(last_day(curdate()))),3) as Ratio"
+    end
+  end
 
 def uptime_query_cumu
   'Select Channel,sum(DailyUptime) as DailyUptime ,sum(WeeklyUptime) as WeeklyUptime ,sum(MonthlyUptime) as MonthlyUptime from CumuConsumption_new group by Channel'
@@ -183,22 +299,6 @@ def uptime_query_sts
   and Power > 10 group by Channel'
 end
 
-def reception_quality_query
-'select round((tab1.A)/(tab2.B*10)*100,0) as RecepQuality from
-(select count(*) as A from RT where ID > (select max(ID)-200 from RT)
-and unix_timestamp()-unix_timestamp(Time)<60 and Channel in
-(select Channel from Channels_S where Active = 1)) tab1,
-(select count(*) as B from Channels_S where Active = 1) tab2;'
-end
-
-def new_transmitters
-'select round(Transmitter,-2),time,count(*) from TransmittersNotExist
-where Transmitter > 999
-and transmitter NOT IN (Select Transmitter from Channels_S where Transmitter is not null)
-and TIMEDIFF(current_timestamp,Time) < 4000000
-group by round(Transmitter,-2)
-order by Time desc'
-end
 
 def norm_query
 	"select round(tab1.Value * tab2.Month * tab3.Persons * tab4.Decile * tab5.Province * tab6.DailyRatio,3) as DailySocialConsumption,

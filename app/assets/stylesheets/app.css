@@ -143,7 +143,7 @@ body {
 }
 
 .footer-icon {
-  height: 30px;
+  height: 45px;
   margin-left: 10px;
 }
 
@@ -155,6 +155,10 @@ body {
 .footer-ts {
   flex: 1;
   text-align: left;
+}
+.footer-icons {
+  flex: 1;
+  text-align: center;
 }
 
 h1 {
@@ -176,4 +180,10 @@ h1 {
 
 .bs-slider-wrapper .slider-selection {
 	background: #337ab7 !important;
+}
+
+.body {
+    background-image: url("energy.png");
+    height: 45px;
+    margin-left: 10px;
 }

@@ -1,12 +1,27 @@
 <div class='footer-container'>
-  <% bla = [{"Transmitter" => "3", "Status" => 3}, {"Transmitter" => "7", "Status" => 1}, {"Transmitter" => "13", "Status" => 0}, {"Transmitter" => "15", "Status" => 0}] %>
-  <% @boxDetails.map do |t| %>
-    <div><%= true && image_tag("bar-#{t["RecepQuality"]}.png", title: "רכיב #{t["Box"]}", class:'footer-icon')%></div>
+  <% @boxStatus.map do |t| %>
+    <div "><%= true && image_tag("bar-#{t["RecepQuality"]/20}.png", title: "רכיב #{t["Box"]} הכולל #{t["Channels"]} ערוצים", class:'footer-icon')%></div>
   <% end %>
 
-  <div class='footer-ts'><%= true && image_tag("energy.png", title: "הצגת גרף זמן-אמת בענן", class:'footer-icon')%></div>
-  <div class='footer-ts'><%= true && image_tag("cloud.png", title: lastSyncTimeString, class:'footer-icon')%></div>
-  <div class='footer-ts'><%= true && image_tag("icon-kibana.png", title: "קישור למערת ניתוח", class:'footer-icon')%></div>
-  <div class='footer-ts'><h4><%= Time.now.strftime("%H:%M  - %d/%m/%Y") %></h4></div>
+  <div style="margin-left: calc(25%)">
+  </div>
+
+  
+  <% if params[:action] == ('show' || 'edit')%>
+    <% if @channel[:CloudRT] == 1 && @channel[:Active] == 1 %> 
+      <div ><a target='_blank' href=''>
+      <%= true && image_tag("energy.png", title: "הצגת גרף זמן-אמת בענן", class: 'footer-icon')%></a></div>
+    <% else %>
+      <div ><%= true && image_tag("energy_gray.png", title: "תצוגת זמן-אמת לא זמינה בערוץ זה",class: 'footer-icon')%></a></div>
+   <% end %> 
+   <%# <% if @channel[:Power].to_i > 10 && @channel[:Active] == 1 %> 
+   <%#   <div ><%= true && image_tag("on_off_green.png", title: "תצוגת זמן-אמת לא זמינה בערוץ זה",class: 'footer-icon')%></a></<div>
+   <%#<% end %>
+ <% end %>
+  <div ><%= true && image_tag("cloud.png", title: lastSyncTimeString, class: 'footer-icon')%></div>
+  <div ><%= true && image_tag("icon-kibana.png", title: "קישור למערכת ניתוח", class: 'footer-icon')%></div>
+  
+
+  <div style="max-width=200px; margin-right: calc(20%)"><h3><%= Time.now.strftime("%d/%m/%Y - %H:%M") %></h3></div>
 
 </div>
