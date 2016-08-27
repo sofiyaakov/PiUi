@@ -28,10 +28,10 @@ class ChannelsController < ApplicationController
           # uptime && ["DailyUptime", "WeeklyUptime", "MonthlyUptime"].each { |term| channel[term] += uptime + uptime2 }
           uptime && ["DailyUptime", "WeeklyUptime", "MonthlyUptime"].each { |term| channel[term] += uptime }
           # uptime && channel["DailyUptime"] += uptime // single change
-          @channel[:daily_uptime] =    @uptime_data_cumu.find {|ch| ch['Channel'] == @channel[:Channel]}.try(:[],'DailyUptime'   ) || 0
-          @channel[:weekly_uptime] =   @uptime_data_cumu.find {|ch| ch['Channel'] == @channel[:Channel]}.try(:[],'WeeklyUptime'  ) || 0
-          @channel[:monthly_uptime] =  @uptime_data_cumu.find {|ch| ch['Channel'] == @channel[:Channel]}.try(:[],'MonthlyUptime' ) || 0
         end
+        @channel[:daily_uptime] =    @uptime_data_cumu.find {|ch| ch['Channel'] == @channel[:Channel]}.try(:[],'DailyUptime'   ) || 0
+        @channel[:weekly_uptime] =   @uptime_data_cumu.find {|ch| ch['Channel'] == @channel[:Channel]}.try(:[],'WeeklyUptime'  ) || 0
+        @channel[:monthly_uptime] =  @uptime_data_cumu.find {|ch| ch['Channel'] == @channel[:Channel]}.try(:[],'MonthlyUptime' ) || 0  
       end
 
       @taoz_cost_data = $dbclient.query(taoz_cost_query).first(16)

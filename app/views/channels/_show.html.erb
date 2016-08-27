@@ -42,13 +42,13 @@
 	</div>
 <% elsif ['day', 'week', 'month'].include?(@period) %>
 	<div title='התפלגות תעו"ז' class="progress">
-	  <div title= "<%= (@taoz_split_low * @channel[:taoz] / 100).round(2) %>" class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" style="width:<%= @taoz_split_low * @split_factor %>%">
+	  <div title= "<%= (@taoz_split_low * @channel[:taoz] / 100).round(2) %> ש''ח" class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" style="width:<%= @taoz_split_low * @split_factor %>%">
 	    <% if @taoz_split_low > 0 %><%= @taoz_split_low.round(1) %>%<% end %>
 	  </div>
-	  <div title="<%= (@taoz_split_hill * @channel[:taoz] / 100).round(2) %>" class="progress-bar progress-bar-warning progress-bar-striped" role="progressbar" style="width:<%= @taoz_split_hill * @split_factor %>%">
+	  <div title="<%= (@taoz_split_hill * @channel[:taoz] / 100).round(2) %> ש''ח" class="progress-bar progress-bar-warning progress-bar-striped" role="progressbar" style="width:<%= @taoz_split_hill * @split_factor %>%">
 	    <% if @taoz_split_hill > 0 %><%= @taoz_split_hill.round(1) %>%<% end %>
 	  </div>
-	  <div title="<%= (@taoz_split_peak * @channel[:taoz] / 100).round(2) %>" class="progress-bar progress-bar-danger progress-bar-striped" role="progressbar" style="width:<%= @taoz_split_peak * @split_factor %>%">
+	  <div title="<%= (@taoz_split_peak * @channel[:taoz] / 100).round(2) %> ש''ח" class="progress-bar progress-bar-danger progress-bar-striped" role="progressbar" style="width:<%= @taoz_split_peak * @split_factor %>%">
 	    <% if @taoz_split_peak > 0 %><%= @taoz_split_peak.round(1) %>%<% end %>
 	  </div>
 	</div>
