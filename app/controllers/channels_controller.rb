@@ -242,7 +242,7 @@ def taoz_split_query
     case @period
     when 'day'
       "Select tab0.TAOZ_Level, ifnull(round(sum(tab0.Cost)/
-        (Select round(sum(tab0.Cost),3) as Cost from
+        (Select sum(tab0.Cost) as Cost from
         ((Select Channel,sum(DailyTAOZCost) as Cost from CumuConsumption_new group by Channel)
         UNION
         (Select Channel,sum(Power*TAOZ)/60/1000/100 as Cost from STS where ID >(select Value from GenSettings where Indx= 'LastSTSidCumuConsump') group by Channel))tab0
@@ -255,7 +255,7 @@ def taoz_split_query
 
     when 'week'
       "Select tab0.TAOZ_Level, ifnull(round(sum(tab0.Cost)/
-        (Select round(sum(tab0.Cost),3) as Cost from
+        (Select sum(tab0.Cost) as Cost from
         ((Select Channel,sum(WeeklyTAOZCost) as Cost from CumuConsumption_new group by Channel)
         UNION
         (Select Channel,sum(Power*TAOZ)/60/1000/100 as Cost from STS where ID >(select Value from GenSettings where Indx= 'LastSTSidCumuConsump') group by Channel))tab0
@@ -267,7 +267,7 @@ def taoz_split_query
 
     when 'month'
       "Select tab0.TAOZ_Level, ifnull(round(sum(tab0.Cost)/
-        (Select round(sum(tab0.Cost),3) as Cost from
+        (Select sum(tab0.Cost) as Cost from
         ((Select Channel,sum(MonthlyTAOZCost) as Cost from CumuConsumption_new group by Channel)
         UNION
         (Select Channel,sum(Power*TAOZ)/60/1000/100 as Cost from STS where ID >(select Value from GenSettings where Indx= 'LastSTSidCumuConsump') group by Channel))tab0
