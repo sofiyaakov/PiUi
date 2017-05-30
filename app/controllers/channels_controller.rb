@@ -196,7 +196,7 @@ class ChannelsController < ApplicationController
   def taoz_query
     'select nLevel,maketime(toHour,0,0) as Time from ClustersTAOZ where
     month(now()) between fromMonth and toMonth and
-    dayofweek(now()) between fromDay and toDay and
+    GREATEST(dayofweek(now()),(select AsDay from Holidays where Date = current_date())) between fromDay and toDay and
     hour(now()) >= fromHour and hour(now()) < toHour;'
   end
 
@@ -204,11 +204,11 @@ class ChannelsController < ApplicationController
     'select maketime(H,0,0) as Time from
     (select Level, min(fromHour) as H from ClustersTAOZ where
     month(now()) between fromMonth and toMonth and
-    dayofweek(now()) between fromDay and toDay and
+    GREATEST(dayofweek(now()),(select AsDay from Holidays where Date = current_date())) between fromDay and toDay and
     fromHour > hour(now()) and nLevel <
     (select nLevel from ClustersTAOZ where
     month(now()) between fromMonth and toMonth and
-    dayofweek(now()) between fromDay and toDay and
+    GREATEST(dayofweek(now()),(select AsDay from Holidays where Date = current_date())) between fromDay and toDay and
     hour(now()) >= fromHour and hour(now()) < toHour))a'
   end
 
